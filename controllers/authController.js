@@ -3,16 +3,11 @@ const JWT = require("jsonwebtoken");
 
 exports.registerUser = async (req, res) => {
   try {
-    let name = req.body.name;
-    let email = req.body.email;
-    let password = req.body.password;
-
+    let { name, email, password } = req.body;
     if (name && email && password) {
       let existingUser = await userModel.findOne({ email: email });
       if (existingUser) {
-        res
-          .status(409)
-          .json({ message: "User with this email id already registered" });
+        res.status(409).json({ message: "This email is already registered" });
       } else {
         let newUser = new userModel({
           name,
@@ -22,21 +17,20 @@ exports.registerUser = async (req, res) => {
         await newUser.save();
         res
           .status(201)
-          .json({ message: "User successfully registered", newUser });
+          .json({ message: "User registered successfully", newUser });
       }
     } else {
-      res.status(400).json({ message: "Please fill the form" });
+      res.status(400).json({ message: "Please fill in all required fields." });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong in server" });
+    res.status(500).json({ message: "Something went wrong on the server" });
   }
 };
 
 exports.loginUser = async (req, res) => {
   try {
-    let email = req.body.email;
-    let password = req.body.password;
+    let { email, password } = req.body;
     if (email && password) {
       let existingUser = await userModel.findOne({ email: email });
       if (existingUser) {
@@ -45,22 +39,20 @@ exports.loginUser = async (req, res) => {
             name: existingUser.name,
             email: existingUser.email,
           };
-          let token = JWT.sign(payLoad, process.env.jwtSecretkey);
-          res.status(200).json({ message: "Login Successful", token });
+          let token = JWT.sign(payLoad, process.env.JWT_SECRET_KEY);
+          res.status(200).json({ message: "Login successful", token });
         } else {
-          res.status(400).json({ message: "Invalied Password" });
+          res.status(400).json({ message: "Invalid password" });
         }
       } else {
-        res
-          .status(400)
-          .json({ message: "User with this email does not exist" });
+        res.status(400).json({ message: "No user found with this email" });
       }
     } else {
-      res.status(400).json({ message: "Please fill the form" });
+      res.status(400).json({ message: "Please fill in all required fields" });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Somthing went wrong in server" });
+    res.status(500).json({ message: "Something went wrong on the server" });
   }
 };
 
@@ -73,8 +65,8 @@ exports.googleLogin = async (req, res) => {
         name: existingUser.name,
         email: existingUser.email,
       };
-      let token = JWT.sign(payLoad, process.env.jwtSecretkey);
-      res.status(200).json({ message: "Login Successfully", token });
+      let token = JWT.sign(payLoad, process.env.JWT_SECRET_KEY);
+      res.status(200).json({ message: "Login successful", token });
     } else {
       let newUser = new userModel({
         name,
@@ -87,11 +79,11 @@ exports.googleLogin = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
       };
-      let token = JWT.sign(payLoad, process.env.jwtSecretkey);
-      res.status(201).json({ message: "Login Successfully", token });
+      let token = JWT.sign(payLoad, process.env.JWT_SECRET_KEY);
+      res.status(201).json({ message: "Login successful", token });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Somthing went wrong in server" });
+    res.status(500).json({ message: "Something went wrong on the server" });
   }
 };
