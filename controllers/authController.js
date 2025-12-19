@@ -20,7 +20,7 @@ exports.registerUser = async (req, res) => {
           .json({ message: "User registered successfully", newUser });
       }
     } else {
-      res.status(400).json({ message: "Please fill in all required fields." });
+      res.status(400).json({ message: "Please fill in all required fields" });
     }
   } catch (error) {
     console.log(error);
