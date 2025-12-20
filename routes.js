@@ -1,16 +1,16 @@
 const express = require("express");
 const authController = require("./controllers/authController");
-const workSpaceController = require("./controllers/workSpaceController");
+const workspaceController = require("./controllers/workspaceController");
 
 const routes = new express.Router();
 
 routes.post("/register", authController.registerUser);
 routes.post("/login", authController.loginUser);
 routes.post("/googleLogin", authController.googleLogin);
-routes.post("/createWorkspace", workSpaceController.createWorkspace);
+routes.post("/createWorkspace", workspaceController.createWorkspace);
 routes.get(
   "/checkWorkspaceExist/:code",
-  workSpaceController.checkWorkspaceExist
+  workspaceController.checkWorkspaceExist
 );
 
 module.exports = routes;
