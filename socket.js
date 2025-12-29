@@ -17,7 +17,7 @@ module.exports = (server) => {
     });
 
     socket.on("codeChange", ({ workspaceID, code }) => {
-      socket.to(workspaceID).emit("code-update", code);
+      socket.to(workspaceID).emit("codeUpdate", code);
     });
 
     socket.on("disconnect", () => {
