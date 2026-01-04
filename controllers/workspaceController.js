@@ -2,13 +2,17 @@ const workspaces = new Set();
 
 function generateWorkspaceCode() {
   const chars = "abcdefghijklmnopqrstuvwxyz";
-  const random = (length) =>
-    Array.from(
-      { length },
-      () => chars[Math.floor(Math.random() * chars.length)]
-    ).join("");
 
-  return `${random(3)}-${random(4)}-${random(3)}`;
+  function random(length) {
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+      const index = Math.floor(Math.random() * chars.length);
+      result += chars[index];
+    }
+    return result;
+  }
+  return random(3) + "-" + random(4) + "-" + random(3);
 }
 
 function getUniqueWorkspaceCode() {
@@ -17,7 +21,6 @@ function getUniqueWorkspaceCode() {
   if (workspaces.has(code)) {
     return getUniqueWorkspaceCode();
   }
-
   return code;
 }
 

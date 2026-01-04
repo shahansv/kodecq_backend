@@ -1,7 +1,7 @@
 const userModel = require("../models/userModel");
 const JWT = require("jsonwebtoken");
 
-exports.registerUser = async (req, res) => {
+exports.register = async (req, res) => {
   try {
     let { name, email, password } = req.body;
     if (name && email && password) {
@@ -13,6 +13,8 @@ exports.registerUser = async (req, res) => {
           name,
           email,
           password,
+          profilePhoto:
+            "https://ik.imagekit.io/shahansv/Kodecq/assets/NoProfilePicture.png",
         });
         await newUser.save();
         res
@@ -28,7 +30,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-exports.loginUser = async (req, res) => {
+exports.login = async (req, res) => {
   try {
     let { email, password } = req.body;
     if (email && password) {
@@ -40,7 +42,11 @@ exports.loginUser = async (req, res) => {
             email: existingUser.email,
           };
           let token = JWT.sign(payLoad, process.env.JWT_SECRET_KEY);
-          res.status(200).json({ message: "Login successful", token });
+          let user = {
+            name: existingUser.name,
+            profilePhoto: existingUser.profilePhoto,
+          };
+          res.status(200).json({ message: "Login successful", token, user });
         } else {
           res.status(400).json({ message: "Invalid password" });
         }
@@ -59,6 +65,9 @@ exports.loginUser = async (req, res) => {
 exports.googleLogin = async (req, res) => {
   try {
     let { email, name, profilePhoto } = req.body;
+    if (profilePhoto) {
+      profilePhoto = profilePhoto.split("=")[0];
+    }
     let existingUser = await userModel.findOne({ email: email });
     if (existingUser) {
       let payLoad = {
@@ -66,7 +75,11 @@ exports.googleLogin = async (req, res) => {
         email: existingUser.email,
       };
       let token = JWT.sign(payLoad, process.env.JWT_SECRET_KEY);
-      res.status(200).json({ message: "Login successful", token });
+      let user = {
+        name: existingUser.name,
+        profilePhoto: existingUser.profilePhoto,
+      };
+      res.status(200).json({ message: "Login successful", token, user });
     } else {
       let newUser = new userModel({
         name,
@@ -80,7 +93,11 @@ exports.googleLogin = async (req, res) => {
         email: newUser.email,
       };
       let token = JWT.sign(payLoad, process.env.JWT_SECRET_KEY);
-      res.status(201).json({ message: "Login successful", token });
+      let user = {
+        name: newUser.name,
+        profilePhoto: newUser.profilePhoto,
+      };
+      res.status(201).json({ message: "Login successful", token, user });
     }
   } catch (error) {
     console.log(error);

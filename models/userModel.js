@@ -18,6 +18,10 @@ const userSchema = mongoose.Schema({
     type: String,
     default: "",
   },
+  profession: {
+    type: String,
+    default: "",
+  },
 });
 
 const userModel = mongoose.model("users", userSchema);
