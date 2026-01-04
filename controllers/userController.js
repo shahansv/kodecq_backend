@@ -73,14 +73,13 @@ exports.changeProfilePhoto = async (req, res) => {
     let { id } = req.params;
     const imageKitResponse = await imageKit.upload({
       file: req.file.buffer,
-      fileName: `profile_${id}.jpg`,
+      fileName: `profile_${id}`,
       folder: "/kodecq/profile-photos",
-      overwriteFile: true,
       useUniqueFileName: true,
     });
 
-    const userDetails = await userModel.findOneAndUpdate(
-      { email },
+    const userDetails = await userModel.findByIdAndUpdate(
+      { _id: id },
       { profilePhoto: imageKitResponse.url },
       { new: true }
     );
