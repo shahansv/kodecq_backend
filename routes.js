@@ -6,6 +6,7 @@ const multerMiddleware = require("./middlewares/multerMiddleware");
 const authController = require("./controllers/authController");
 const workspaceController = require("./controllers/workspaceController");
 const userController = require("./controllers/userController");
+const questionController = require("./controllers/questionController");
 
 const routes = new express.Router();
 
@@ -19,4 +20,6 @@ routes.patch("/editProfile/:id", jwtMiddleware, userController.editProfile);
 routes.patch("/changePassword/:id", jwtMiddleware, userController.changePassword);
 routes.patch("/removeProfilePhoto/:id", jwtMiddleware, userController.removeProfilePhoto);
 routes.patch("/changeProfilePhoto/:id", jwtMiddleware, multerMiddleware.single("profilePhoto"), userController.changeProfilePhoto);
+routes.post("/addQuestion", jwtMiddleware, questionController.AddQuestion);
+routes.get("/getQuestions", jwtMiddleware, questionController.getQuestions);
 module.exports = routes;

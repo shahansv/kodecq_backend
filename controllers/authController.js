@@ -45,6 +45,7 @@ exports.login = async (req, res) => {
           let user = {
             name: existingUser.name,
             profilePhoto: existingUser.profilePhoto,
+            userId: existingUser._id,
           };
           res.status(200).json({ message: "Login successful", token, user });
         } else {
@@ -78,6 +79,7 @@ exports.googleLogin = async (req, res) => {
       let user = {
         name: existingUser.name,
         profilePhoto: existingUser.profilePhoto,
+        userId: existingUser._id,
       };
       res.status(200).json({ message: "Login successful", token, user });
     } else {
@@ -96,6 +98,7 @@ exports.googleLogin = async (req, res) => {
       let user = {
         name: newUser.name,
         profilePhoto: newUser.profilePhoto,
+        userId: newUser._id,
       };
       res.status(201).json({ message: "Login successful", token, user });
     }
