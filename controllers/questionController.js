@@ -1,4 +1,5 @@
 const questionModel = require("../models/questionModel");
+const answerModel = require("../models/answerModel");
 
 exports.AddQuestion = async (req, res) => {
   try {
@@ -46,6 +47,111 @@ exports.getQuestions = async (req, res) => {
       .json({ message: "all question data fetched", questionData });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Something went wrong in server" });
+  }
+};
+
+exports.viewQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const questionData = await questionModel
+      .findById(id)
+      .populate("askedBy", "name profilePhoto profession");
+
+    const answerData = await answerModel
+      .find({ questionId: id })
+      .populate("answeredBy", "name profilePhoto profession")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Question and answers fetched successfully",
+      question: questionData,
+      answers: answerData,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong in server" });
+  }
+};
+
+exports.addAnswer = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { answer, code, userId } = req.body;
+
+    const newAnswer = new answerModel({
+      questionId: id,
+      answer,
+      code,
+      answeredBy: userId,
+    });
+    await newAnswer.save();
+    return res.status(201).json({ message: "Answer added successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong in server" });
+  }
+};
+
+exports.getMyQuestions = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const myQuestions = await questionModel
+      .find({ askedBy: id })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "My questions fetched successfully",
+      myQuestions,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong in server" });
+  }
+};
+
+exports.deleteQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let deletedQuestion = await questionModel.findByIdAndDelete({ _id: id });
+    res
+      .status(200)
+      .json({ message: "Question deleted successfully", deletedQuestion });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong in server" });
+  }
+};
+
+exports.editQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, problem, code } = req.body;
+    let updatedQuestion = await questionModel.findByIdAndUpdate(
+      { _id: id },
+      { title, problem, code },
+      { new: true }
+    );
+    res
+      .status(200)
+      .json({ message: "Question updated successfully", updatedQuestion });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong in server" });
+  }
+};
+
+exports.deleteAnswer = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let deletedAnswer = await answerModel.findByIdAndDelete({ _id: id });
+    res
+      .status(200)
+      .json({ message: "Answer deleted successfully", deletedAnswer });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Something went wrong in server" });
   }
 };

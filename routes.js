@@ -22,4 +22,11 @@ routes.patch("/removeProfilePhoto/:id", jwtMiddleware, userController.removeProf
 routes.patch("/changeProfilePhoto/:id", jwtMiddleware, multerMiddleware.single("profilePhoto"), userController.changeProfilePhoto);
 routes.post("/addQuestion", jwtMiddleware, questionController.AddQuestion);
 routes.get("/getQuestions", jwtMiddleware, questionController.getQuestions);
+routes.get("/viewQuestion/:id", jwtMiddleware, questionController.viewQuestion);
+routes.post("/addAnswer/:id", jwtMiddleware, questionController.addAnswer);
+routes.get("/getMyQuestions/:id", jwtMiddleware, questionController.getMyQuestions);
+routes.delete("/deleteQuestion/:id", jwtMiddleware, questionController.deleteQuestion);
+routes.patch("/editQuestion/:id", jwtMiddleware, questionController.editQuestion);
+routes.delete("/deleteAnswer/:id", jwtMiddleware, questionController.deleteAnswer);
+
 module.exports = routes;
