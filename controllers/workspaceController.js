@@ -41,15 +41,19 @@ exports.checkWorkspaceExist = (req, res) => {
   try {
     const { code } = req.params;
 
-    if (workspaces.has(code)) {
-      res
-        .status(200)
-        .json({ message: `Workspace ${code} exist`, exists: true });
+    if (code) {
+      if (workspaces.has(code)) {
+        res
+          .status(200)
+          .json({ message: `Workspace ${code} exist`, exists: true });
+      } else {
+        res.status(400).json({
+          exists: false,
+          message: "Workspace does not exist",
+        });
+      }
     } else {
-      res.status(200).json({
-        exists: false,
-        message: "Workspace does not exist",
-      });
+      return res.status(400).json({ message: "workspace code is required" });
     }
   } catch (error) {
     console.log(error);

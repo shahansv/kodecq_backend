@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
           email,
           password,
           profilePhoto:
-            "https://ik.imagekit.io/shahansv/Kodecq/assets/NoProfilePicture.png",
+            "https://ik.imagekit.io/shahansv/kodecq/assets/NoProfilePhoto.svg?updatedAt=1767897694129",
         });
         await newUser.save();
         res
@@ -68,6 +68,9 @@ exports.googleLogin = async (req, res) => {
     let { email, name, profilePhoto } = req.body;
     if (profilePhoto) {
       profilePhoto = profilePhoto.split("=")[0];
+    } else {
+      profilePhoto =
+        "https://ik.imagekit.io/shahansv/kodecq/assets/NoProfilePhoto.svg?updatedAt=1767897694129";
     }
     let existingUser = await userModel.findOne({ email: email });
     if (existingUser) {

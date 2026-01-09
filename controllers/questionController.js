@@ -5,9 +5,7 @@ exports.AddQuestion = async (req, res) => {
   try {
     const { language, title, problem, code, userId } = req.body;
 
-    if (language == "" || title == "" || problem == "" || userId == "") {
-      return res.status(400).json({ message: "Please fill all the fields" });
-    } else {
+    if (language && title && problem) {
       const newQuestion = new questionModel({
         language,
         title,
@@ -17,11 +15,14 @@ exports.AddQuestion = async (req, res) => {
       });
 
       await newQuestion.save();
-
       return res.status(201).json({ message: "Question added successfully" });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields" });
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).json({ message: "Something went wrong in server" });
   }
 };
@@ -80,14 +81,19 @@ exports.addAnswer = async (req, res) => {
     const { id } = req.params;
     const { answer, code, userId } = req.body;
 
-    const newAnswer = new answerModel({
-      questionId: id,
-      answer,
-      code,
-      answeredBy: userId,
-    });
-    await newAnswer.save();
-    return res.status(201).json({ message: "Answer added successfully" });
+    if (answer) {
+      const newAnswer = new answerModel({
+        questionId: id,
+        answer,
+        code,
+        answeredBy: userId,
+      });
+
+      await newAnswer.save();
+      return res.status(201).json({ message: "Answer added successfully" });
+    } else {
+      return res.status(400).json({ message: "Please fill answer fields" });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Something went wrong in server" });
@@ -129,14 +135,21 @@ exports.editQuestion = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, problem, code } = req.body;
-    let updatedQuestion = await questionModel.findByIdAndUpdate(
-      { _id: id },
-      { title, problem, code },
-      { new: true }
-    );
-    res
-      .status(200)
-      .json({ message: "Question updated successfully", updatedQuestion });
+
+    if (title && problem) {
+      let updatedQuestion = await questionModel.findByIdAndUpdate(
+        { _id: id },
+        { title, problem, code },
+        { new: true }
+      );
+      res
+        .status(200)
+        .json({ message: "Question updated successfully", updatedQuestion });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Something went wrong in server" });
